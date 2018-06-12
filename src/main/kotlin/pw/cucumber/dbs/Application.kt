@@ -9,12 +9,12 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.MissingOptionException
 
+import kotlinx.coroutines.experimental.*
 
 
 open class Application {
     companion object {
         @JvmStatic fun main(args: Array<String>) {
-
             val options = Options()
             options.addRequiredOption("i", "input", true, "input file")
             options.addRequiredOption("o", "output", true, "output file")
@@ -38,8 +38,15 @@ open class Application {
                 }
 
                 File(outFile).printWriter().use { out ->
-                    spreadsheet.getRows().forEach {
-                        out.println(it.joinToString(","))
+
+                    val deferred = spreadsheet.getRowNames().map { n ->
+                        async {
+                            spreadsheet.getRow(n)
+                        }
+                    }
+                    runBlocking {
+                        val rows = deferred.map({ it.await() }) //
+                        rows.forEach { out.println(it.joinToString(","))}
                     }
                 }
 
