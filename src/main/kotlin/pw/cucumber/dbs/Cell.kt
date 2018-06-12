@@ -46,11 +46,10 @@ class Cell(private var value: String, private var cellName: String) {
     }
 
     fun getValue(spreadsheet: Spreadsheet):Double {
-        if(!calculatedValue.isNaN()) {
-//            System.out.printf("use precomputed value %s %s \n", value, calculatedValue)
-            return calculatedValue
+        return if(!calculatedValue.isNaN()) {
+            calculatedValue
         } else {
-            return evalExpression(spreadsheet)
+            evalExpression(spreadsheet)
         }
 
     }
@@ -59,6 +58,6 @@ class Cell(private var value: String, private var cellName: String) {
         if (!calculatedValue.isNaN()) {
             return calculatedValue.toString()
         }
-        return if (isExpression()) return value.substring(1) else return value
+        return if (isExpression()) value.substring(1) else value
     }
 }

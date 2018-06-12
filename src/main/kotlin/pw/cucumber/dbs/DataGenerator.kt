@@ -32,10 +32,10 @@ fun writeToFile(outFile:String, data:ArrayList<ArrayList<String>>){
 }
 
 fun generateData(rows: List<Char>, cols: Int = 1000, formulas: Int = 50):ArrayList<ArrayList<String>> {
-    var result = ArrayList<ArrayList<String>>()
+    val result = ArrayList<ArrayList<String>>()
 
     for (row in rows) {
-        var rowValue = ArrayList<String>()
+        val rowValue = ArrayList<String>()
         for (col in 0..cols) {
             val rnd = rand(0, 100)
             if (rnd >= formulas) {
