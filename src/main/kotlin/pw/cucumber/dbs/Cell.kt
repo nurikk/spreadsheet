@@ -1,32 +1,47 @@
 package pw.cucumber.dbs
 
 import org.mariuszgromada.math.mxparser.Expression
-import kotlin.math.withSign
 
-class Cell(var value: String) {
 
+class Cell(private var value: String, private var cellName: String) {
 
     private fun isExpression():Boolean {
-        return this.value.first() === '='
+        return value.first() == '='
     }
 
+    @Throws(Exception::class)
     private fun evalExpression(spreadsheet:Spreadsheet):Double {
-        val exp = this.value.substring(1)
+        var exString = toString()
+        var exp = Expression(exString)
+        var deps = exp.missingUserDefinedArguments.filter { spreadsheet.getCell(it).isExpression() }
 
-        val e = Expression(exp)
-        val missing = e.missingUserDefinedArguments
-        missing.forEach { miss ->
-            e.defineConstant(miss, spreadsheet.getValue(miss))
+        while (deps.isNotEmpty()){
+            deps.forEach {
+                exString = exString.replace(it, spreadsheet.getCell(it).toString())
+            }
+            exp = Expression(exString)
+            deps = exp.missingUserDefinedArguments.filter { spreadsheet.getCell(it).isExpression() }
+            if (deps.contains(cellName)){
+                throw Exception("Circular dependence detected")
+            }
         }
-        return e.calculate()
+
+        exp.missingUserDefinedArguments.forEach { miss ->
+            exp.defineConstant(miss, spreadsheet.getValue(miss))
+        }
+
+        return exp.calculate()
     }
 
     fun getValue(spreadsheet: Spreadsheet):Double {
-        if (this.isExpression()) {
-            return evalExpression(spreadsheet)
+        return if (this.isExpression()) {
+            evalExpression(spreadsheet)
         } else {
-
-            return value.toDouble()
+            value.toDouble()
         }
+    }
+
+    override fun toString(): String {
+        return value.substring(1)
     }
 }
