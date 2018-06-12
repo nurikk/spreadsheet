@@ -1,8 +1,14 @@
 
 A spreadsheet consists of a two-dimensional array of cells, labeled A0, A1, etc.
-Rows are identified using letters, columns by numbers. Each cell contains either an integer (its value) or an expression. Expressions always start with a ‘=’ and can contain integers, cell references, operators ‘+’, ‘-‘, ‘*’, ‘/’ and parentheses ‘(‘, ‘)’ with the usual rules of evaluation.
+
+Rows are identified using letters, columns by numbers. Each cell contains either an integer (its value) or an expression. 
+
+Expressions always start with a ‘=’ and can contain integers, cell references, operators ‘+’, ‘-‘, ‘*’, ‘/’ and parentheses ‘(‘, ‘)’ with the usual rules of evaluation.
+
 Write a program to read the input from a file, evaluate the values of all the cells, and write the output to an output file.
+
 The input and output files should be in CSV format.
+
 For example, the following CSV input:
 ```csv
 2,4,1,=A0+A1*A2
