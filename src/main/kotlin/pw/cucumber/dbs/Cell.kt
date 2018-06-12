@@ -4,23 +4,34 @@ import org.mariuszgromada.math.mxparser.Expression
 
 
 class Cell(private var value: String, private var cellName: String) {
+    private var calculatedValue:Double = Double.NaN
 
     private fun isExpression():Boolean {
         return value.first() == '='
     }
 
+    init {
+        if (!isExpression()) {
+            calculatedValue = value.toDouble()
+        }
+    }
+
     @Throws(Exception::class)
     private fun evalExpression(spreadsheet:Spreadsheet):Double {
         var exString = toString()
-        var exp = Expression(exString)
-        var deps = exp.missingUserDefinedArguments.filter { spreadsheet.getCell(it).isExpression() }
 
-        while (deps.isNotEmpty()){
+        var exp = Expression(exString)
+
+        var deps = exp.missingUserDefinedArguments
+
+        while (deps.isNotEmpty()) {
             deps.forEach {
-                exString = exString.replace(it, spreadsheet.getCell(it).toString())
+//                System.out.printf("dep: %s exString:\n", it, exString)
+                val depCell = spreadsheet.getCell(it)
+                exString = exString.replace(it, depCell.toString())
             }
             exp = Expression(exString)
-            deps = exp.missingUserDefinedArguments.filter { spreadsheet.getCell(it).isExpression() }
+            deps = exp.missingUserDefinedArguments
             if (deps.contains(cellName)){
                 throw Exception("Circular dependence detected")
             }
@@ -29,19 +40,25 @@ class Cell(private var value: String, private var cellName: String) {
         exp.missingUserDefinedArguments.forEach { miss ->
             exp.defineConstant(miss, spreadsheet.getValue(miss))
         }
+        calculatedValue = exp.calculate()
+        return calculatedValue
 
-        return exp.calculate()
     }
 
     fun getValue(spreadsheet: Spreadsheet):Double {
-        return if (this.isExpression()) {
-            evalExpression(spreadsheet)
+        if(!calculatedValue.isNaN()) {
+//            System.out.printf("use precomputed value %s %s \n", value, calculatedValue)
+            return calculatedValue
         } else {
-            value.toDouble()
+            return evalExpression(spreadsheet)
         }
+
     }
 
     override fun toString(): String {
-        return value.substring(1)
+        if (!calculatedValue.isNaN()) {
+            return calculatedValue.toString()
+        }
+        return if (isExpression()) return value.substring(1) else return value
     }
 }

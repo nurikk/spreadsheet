@@ -1,6 +1,8 @@
 package pw.cucumber.dbs
 
 import org.junit.Test
+import java.io.File
+import java.io.InputStream
 import kotlin.test.*
 
 
@@ -21,8 +23,8 @@ class SpreadsheetTest {
     @Test
     fun references() {
         val s1 = Spreadsheet()
-        s1.addRow("A", "1,2,=A0,=A1".split(","))
-        assertEquals("[[1.00000, 2.00000, 1.00000, 2.00000]]", s1.getRows().toString())
+        s1.addRow("A", "1,2,=A0+A1,=A2-4,=A0".split(","))
+        assertEquals("[[1.00000, 2.00000, 1.00000, 1.00000]]", s1.getRows().toString())
 
         val s2 = Spreadsheet()
         s2.addRow("A", "=A1,3,2,1".split(","))
@@ -95,6 +97,29 @@ class SpreadsheetTest {
 
     }
 
+
+
+    @Test
+    fun bigSpreadsheet() {
+
+
+
+        val inputStream: InputStream = File("./mocks/100cols.csv").inputStream()
+        val lineList = mutableListOf<String>()
+        inputStream.bufferedReader().useLines { lines -> lines.forEach { lineList.add(it)} }
+        val alphabet = ('A'..'Z').toList()
+        val spreadsheet = Spreadsheet()
+
+        lineList.forEachIndexed{ index, element ->
+            spreadsheet.addRow(alphabet[index].toString(), element.split(","))
+        }
+
+        assertEquals(spreadsheet.getRows().size, 1000)
+
+
+
+
+    }
 
 
 }
