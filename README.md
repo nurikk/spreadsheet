@@ -1,4 +1,6 @@
 
+[Original challenge text](https://github.com/blakeembrey/code-problems/tree/master/problems/spreadsheet)
+
 A spreadsheet consists of a two-dimensional array of cells, labeled A0, A1, etc.
 
 Rows are identified using letters, columns by numbers. Each cell contains either an integer (its value) or an expression. 
