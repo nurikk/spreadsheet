@@ -5,7 +5,6 @@ import java.util.HashMap
 class Token (val type: String = "", val value: String ="") {
     private val assoc: HashMap<String, String> = HashMap()
     init {
-        assoc["^"] = "right"
         assoc["*"] = "left"
         assoc["/"] = "left"
         assoc["+"] = "left"
@@ -14,7 +13,6 @@ class Token (val type: String = "", val value: String ="") {
 
     private val prec: HashMap<String, Int> = HashMap()
     init {
-        prec["^"] = 4
         prec["*"] = 3
         prec["/"] = 3
         prec["+"] = 2
