@@ -9,21 +9,21 @@ class ParserTest {
 
     @Test
     fun tokenizer() {
-        val tokenizer = Tokenizer()
-        val tokens = tokenizer.tokenize("3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3")
-        assertEquals("[Literal (3), Operator (+), Literal (4), Operator (*), Literal (2), Operator (/), Left Parenthesis ((), Literal (1), Operator (-), Literal (5), Right Parenthesis ()), Operator (^), Literal (2), Operator (^), Literal (3)]", tokens.toString())
+        val tokenizer = Tokenizer("3 + 4 * 2 / ( 1 - 5 ) * 2 / 3")
 
-        val tokens2 = tokenizer.tokenize("89sin(45) + 2.2x/7")
-        assertEquals("[Literal (89), Operator (*), Function (sin), Left Parenthesis ((), Literal (45), Right Parenthesis ()), Operator (+), Literal (2.2), Operator (*), Variable (x), Operator (/), Literal (7)]", tokens2.toString())
+        assertEquals("[Literal (3), Operator (+), Literal (4), Operator (*), Literal (2), Operator (/), Left Parenthesis ((), Literal (1), Operator (-), Literal (5), Right Parenthesis ()), Operator (*), Literal (2), Operator (/), Literal (3)]", tokenizer.toString())
 
-        val tokens3 = tokenizer.tokenize("A5 + B1")
-        assertEquals("[Variable (A5), Operator (+), Variable (B1)]", tokens3.toString())
+        val tokenizer2 = Tokenizer("89sin(45) + 2.2x/7")
+        assertEquals("[Literal (89), Operator (*), Function (sin), Left Parenthesis ((), Literal (45), Right Parenthesis ()), Operator (+), Literal (2.2), Operator (*), Variable (x), Operator (/), Literal (7)]", tokenizer2.toString())
 
-        val tokens4 = tokenizer.tokenize("4A5 + B1")
-        assertEquals("[Literal (4), Operator (*), Variable (A5), Operator (+), Variable (B1)]", tokens4.toString())
+        val tokenizer3 = Tokenizer("A5 + B1")
+        assertEquals("[Variable (A5), Operator (+), Variable (B1)]", tokenizer3.toString())
 
-        val tokens5 = tokenizer.tokenize("A3*(A0+1)")
-        assertEquals("[Variable (A3), Operator (*), Left Parenthesis ((), Variable (A0), Operator (+), Literal (1), Right Parenthesis ())]", tokens5.toString())
+        val tokenizer4 = Tokenizer("4A5 + B1")
+        assertEquals("[Literal (4), Operator (*), Variable (A5), Operator (+), Variable (B1)]", tokenizer4.toString())
+
+        val tokenizer5 = Tokenizer("A3*(A0+1)")
+        assertEquals("[Variable (A3), Operator (*), Left Parenthesis ((), Variable (A0), Operator (+), Literal (1), Right Parenthesis ())]", tokenizer5.toString())
     }
 
 

@@ -2,8 +2,8 @@ package mathparser
 
 import java.util.*
 
-class Tokenizer {
-    private val operators = Arrays.asList('+', '-', '*', '/', '^')
+class Tokenizer (inStr:String) {
+    private val operators = Arrays.asList('+', '-', '*', '/')
 
     private fun isOperator(char: Char):Boolean {
         return operators.contains(char)
@@ -21,7 +21,7 @@ class Tokenizer {
 
     private var letterBuffer: ArrayList<Char> = ArrayList()
     private var numberBuffer: ArrayList<Char> = ArrayList()
-    private var result: ArrayList<Token> = ArrayList()
+    var tokens: ArrayList<Token> = ArrayList()
 
     private fun emptyNumberBufferAsLiteral() {
 
@@ -29,31 +29,31 @@ class Tokenizer {
             val varName = ArrayList<Char>()
             varName.addAll(letterBuffer)
             varName.addAll(numberBuffer)
-            result.add(Token("Variable", varName.joinToString("")))
+            tokens.add(Token("Variable", varName.joinToString("")))
 
             numberBuffer = ArrayList()
             letterBuffer = ArrayList()
         }
 
         if(numberBuffer.isNotEmpty()) {
-            result.add(Token("Literal", numberBuffer.joinToString("")))
+            tokens.add(Token("Literal", numberBuffer.joinToString("")))
             numberBuffer = ArrayList()
         }
     }
 
     private fun emptyLetterBufferAsVariables() {
         for (i in letterBuffer.indices) {
-            result.add(Token("Variable", letterBuffer[i].toString()))
+            tokens.add(Token("Variable", letterBuffer[i].toString()))
             if(i < letterBuffer.size - 1) {
-                result.add(Token("Operator", "*"))
+                tokens.add(Token("Operator", "*"))
             }
         }
         letterBuffer = ArrayList()
     }
-    fun tokenize(inStr:String): ArrayList<Token> {
+    init {
         letterBuffer = ArrayList()
         numberBuffer = ArrayList()
-        result = ArrayList()
+        tokens = ArrayList()
 
 
         val reader = inStr.replace(" ", "").asIterable().iterator()
@@ -67,7 +67,7 @@ class Tokenizer {
                     if(numberBuffer.isNotEmpty()) {
 
                         emptyNumberBufferAsLiteral()
-                        result.add(Token("Operator", "*"))
+                        tokens.add(Token("Operator", "*"))
 
                     }
 
@@ -78,37 +78,37 @@ class Tokenizer {
 
                     emptyNumberBufferAsLiteral()
                     emptyLetterBufferAsVariables()
-                    result.add(Token("Operator", char.toString()))
+                    tokens.add(Token("Operator", char.toString()))
 
                 }
                 isLeftParenthesis(char) -> {
 
                     if(letterBuffer.isNotEmpty()) {
 
-                        result.add(Token("Function", letterBuffer.joinToString("")))
+                        tokens.add(Token("Function", letterBuffer.joinToString("")))
                         letterBuffer = ArrayList()
 
                     } else if(numberBuffer.isNotEmpty()) {
 
                         emptyNumberBufferAsLiteral()
-                        result.add(Token("Operator", "*"))
+                        tokens.add(Token("Operator", "*"))
 
                     }
-                    result.add(Token("Left Parenthesis", char.toString()))
+                    tokens.add(Token("Left Parenthesis", char.toString()))
 
                 }
                 isRightParenthesis(char) -> {
 
                     emptyLetterBufferAsVariables()
                     emptyNumberBufferAsLiteral()
-                    result.add(Token("Right Parenthesis", char.toString()))
+                    tokens.add(Token("Right Parenthesis", char.toString()))
 
                 }
                 isComma(char) -> {
 
                     emptyNumberBufferAsLiteral()
                     emptyLetterBufferAsVariables()
-                    result.add(Token("Function Argument Separator", char.toString()))
+                    tokens.add(Token("Function Argument Separator", char.toString()))
 
                 }
             }
@@ -119,6 +119,9 @@ class Tokenizer {
         if (letterBuffer.isEmpty()) {
             emptyLetterBufferAsVariables()
         }
-        return result
+    }
+
+    override fun toString(): String {
+        return tokens.toString()
     }
 }
