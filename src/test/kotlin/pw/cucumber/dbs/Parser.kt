@@ -71,7 +71,7 @@ class ParserTest {
         tokens2.add(Token("Literal", "3"))
 
 
-        var ast2 = AstTree(tokens2)
+        val ast2 = AstTree(tokens2)
         assertEquals(-3.0, ast2.getValue())
     }
 

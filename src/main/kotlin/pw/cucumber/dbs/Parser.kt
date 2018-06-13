@@ -96,58 +96,58 @@ class Tokenizer {
         val reader = inStr.replace(" ", "").asIterable().iterator()
         while (reader.hasNext()){
             val char = reader.next()
-            if (isDigit(char)) {
+            when {
+                isDigit(char) -> numberBuffer.add(char)
+                char == '.' -> numberBuffer.add(char)
+                isLetter(char) -> {
 
-                numberBuffer.add(char)
+                    if(numberBuffer.isNotEmpty()) {
 
-            } else if(char == '.') {
+                        emptyNumberBufferAsLiteral()
+                        result.add( Token("Operator", "*"))
 
-                numberBuffer.add(char)
+                    }
 
-            } else if (isLetter(char)) {
-
-                if(numberBuffer.isNotEmpty()) {
-
-                    emptyNumberBufferAsLiteral()
-                    result.add( Token("Operator", "*"))
-
-                }
-
-                letterBuffer.add(char)
-
-            } else if (isOperator(char)) {
-
-                emptyNumberBufferAsLiteral()
-                emptyLetterBufferAsVariables()
-                result.add( Token("Operator", char.toString()))
-
-            } else if (isLeftParenthesis(char)) {
-
-                if(letterBuffer.isNotEmpty()) {
-
-                    result.add( Token("Function", letterBuffer.joinToString("")))
-                    letterBuffer = ArrayList()
-
-                } else if(numberBuffer.isNotEmpty()) {
-
-                    emptyNumberBufferAsLiteral()
-                    result.add( Token("Operator", "*"))
+                    letterBuffer.add(char)
 
                 }
-                result.add( Token("Left Parenthesis", char.toString()))
+                isOperator(char) -> {
 
-            } else if (isRightParenthesis(char)) {
+                    emptyNumberBufferAsLiteral()
+                    emptyLetterBufferAsVariables()
+                    result.add( Token("Operator", char.toString()))
 
-                emptyLetterBufferAsVariables()
-                emptyNumberBufferAsLiteral()
-                result.add( Token("Right Parenthesis", char.toString()))
+                }
+                isLeftParenthesis(char) -> {
 
-            } else if (isComma(char)) {
+                    if(letterBuffer.isNotEmpty()) {
 
-                emptyNumberBufferAsLiteral()
-                emptyLetterBufferAsVariables()
-                result.add( Token("Function Argument Separator", char.toString()))
+                        result.add( Token("Function", letterBuffer.joinToString("")))
+                        letterBuffer = ArrayList()
 
+                    } else if(numberBuffer.isNotEmpty()) {
+
+                        emptyNumberBufferAsLiteral()
+                        result.add( Token("Operator", "*"))
+
+                    }
+                    result.add( Token("Left Parenthesis", char.toString()))
+
+                }
+                isRightParenthesis(char) -> {
+
+                    emptyLetterBufferAsVariables()
+                    emptyNumberBufferAsLiteral()
+                    result.add( Token("Right Parenthesis", char.toString()))
+
+                }
+                isComma(char) -> {
+
+                    emptyNumberBufferAsLiteral()
+                    emptyLetterBufferAsVariables()
+                    result.add( Token("Function Argument Separator", char.toString()))
+
+                }
             }
         }
         if (numberBuffer.isNotEmpty()) {
@@ -163,7 +163,7 @@ class Tokenizer {
 
 
 
-class AstNode(val token:Token, val leftChildNode: AstNode? = null, val rightChildNode: AstNode? = null) {
+class AstNode(private val token:Token, private val leftChildNode: AstNode? = null, private val rightChildNode: AstNode? = null) {
 
     override fun toString(): String {
         return token.toString()
@@ -200,7 +200,7 @@ class AstTree(tokens: ArrayList<Token>) {
     private val variables = mutableMapOf<String, String>()
     private val opStack = Stack<Token>()
     private val outStack = Stack<AstNode>()
-    var root: AstNode = AstNode(Token())
+    private var root: AstNode = AstNode(Token())
 
     init {
         tokens.forEach { v ->
