@@ -13,21 +13,6 @@ class AstTree(tokens: ArrayList<Token>) {
             if(v.type === "Literal" || v.type === "Variable" ) {
                 outStack.push(AstNode(v, null, null))
             }
-
-            else if(v.type === "Function") {
-                opStack.push(v)
-            }
-            else if(v.type === "Function Argument Separator") {
-
-
-                while(opStack.size > 2 && opStack.peek().type !== "Left Parenthesis") {
-
-                    val rightChildNode = outStack.pop()
-                    val leftChildNode = outStack.pop()
-                    outStack.push(AstNode(opStack.pop(), leftChildNode, rightChildNode))
-                }
-            }
-
             else if(v.type == "Operator") {
 
                 while (opStack.isNotEmpty() && opStack.peek() != null && (opStack.peek().type === "Operator")
@@ -55,19 +40,10 @@ class AstTree(tokens: ArrayList<Token>) {
                     val leftChildNode = outStack.pop()
                     outStack.push(AstNode(opStack.pop(), leftChildNode, rightChildNode))
                 }
-                /*if(opStack.length == 0){
-                    console.log("Unmatched parentheses")
-                    return
-                }*/
 
                 opStack.pop()
 
 
-                if(opStack.peek() != null  && opStack.peek().type === "Function") {
-                    val rightChildNode = outStack.pop()
-                    val leftChildNode = outStack.pop()
-                    outStack.push(AstNode(opStack.pop(), leftChildNode, rightChildNode))
-                }
             }
         }
         while(opStack.isNotEmpty()) {
