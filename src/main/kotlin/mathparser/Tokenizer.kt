@@ -1,6 +1,7 @@
 package mathparser
 
 import java.util.*
+import kotlin.collections.ArrayList
 
 class Tokenizer (inStr:String) {
     private val operators = Arrays.asList('+', '-', '*', '/')
@@ -49,6 +50,24 @@ class Tokenizer (inStr:String) {
             }
         }
         letterBuffer = ArrayList()
+    }
+    private fun validateTokens(){
+
+        var parenteses = 0
+        tokens.forEach {
+            when(it.type){
+                "Left Parenthesis" -> parenteses++
+                "Right Parenthesis" -> parenteses--
+                else -> {}
+            }
+        }
+
+        if (parenteses!=0) {
+            System.out.printf("parenteses !=0\n")
+            tokens = ArrayList()
+        }
+
+
     }
     init {
         letterBuffer = ArrayList()
@@ -102,14 +121,6 @@ class Tokenizer (inStr:String) {
                     emptyLetterBufferAsVariables()
                     emptyNumberBufferAsLiteral()
                     tokens.add(Token("Right Parenthesis", char.toString()))
-
-                }
-                isComma(char) -> {
-
-                    emptyNumberBufferAsLiteral()
-                    emptyLetterBufferAsVariables()
-                    tokens.add(Token("Function Argument Separator", char.toString()))
-
                 }
             }
         }
@@ -119,9 +130,14 @@ class Tokenizer (inStr:String) {
         if (letterBuffer.isEmpty()) {
             emptyLetterBufferAsVariables()
         }
+        validateTokens()
     }
 
     override fun toString(): String {
         return tokens.toString()
+    }
+
+    fun getVariableNames() :List<String> {
+        return tokens.filter { it.type == "Variable" }.map { it.value }
     }
 }
