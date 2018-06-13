@@ -33,7 +33,7 @@ mvn package
 ```
     
 ## Run
-takes 70+ seconds to run on 2.9 GHz Intel Core i7 100_000cols*26 rows with 10% formulas
+takes 5+ seconds to run on 2.9 GHz Intel Core i7 100_000cols*26 rows with 10% formulas
 ```bash
 time java -jar target/pw-cucumber-dbs-1.0-SNAPSHOT-jar-with-dependencies.jar -i ./mocks/100000cols.csv  -o ./out.csv
 ``` 

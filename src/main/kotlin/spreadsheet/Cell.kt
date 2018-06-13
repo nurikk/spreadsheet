@@ -21,20 +21,20 @@ class Cell(private var value: String, private var cellName: String) {
         var exString = toString()
         var tokenizer = Tokenizer(exString)
         var deps = tokenizer.getVariableNames()
-
-        //Very dumb
-        while (deps.isNotEmpty()) {
-            deps.forEach {
-                val depCell = spreadsheet.getCell(it)
-                exString = exString.replace(it, depCell.toString())
-            }
-
-            tokenizer = Tokenizer(exString)
-            deps = tokenizer.getVariableNames()
-            if (deps.contains(cellName)){
-                throw Exception("Circular dependence detected")
-            }
-        }
+        // TODO: add circular detection
+//        //Very dumb curcula dependacy detection
+//        while (deps.isNotEmpty()) {
+//            deps.forEach {
+//                val depCell = spreadsheet.getCell(it)
+//                exString = exString.replace(it, depCell.toString())
+//            }
+//
+//            tokenizer = Tokenizer(exString)
+//            deps = tokenizer.getVariableNames()
+//            if (deps.contains(cellName)){
+//                throw Exception("Circular dependence detected")
+//            }
+//        }
 
         val ast = AstTree(tokenizer.tokens)
         deps.forEach { miss ->

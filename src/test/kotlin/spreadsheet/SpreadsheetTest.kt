@@ -69,13 +69,13 @@ class SpreadsheetTest {
 
     @Test
     fun circularDependency() {
-        assertFailsWith(Exception::class) {
+        assertFailsWith(Throwable::class) {
             val s1 = Spreadsheet()
             s1.addRow("A", "=A2,3,=A0,1".split(","))
             assertEquals("[[5.00000, 3.00000, 5.00000, 5.00000]]", s1.getRows().toString())
         }
 
-        assertFailsWith(Exception::class) {
+        assertFailsWith(Throwable::class) {
             val s2 = Spreadsheet()
             s2.addRow("A", "=A1,=A2,=A0,1".split(","))
             assertEquals("[[5.00000, 3.00000, 5.00000, 5.00000]]", s2.getRows().toString())
