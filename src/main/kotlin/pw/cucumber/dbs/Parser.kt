@@ -61,6 +61,17 @@ class Tokenizer {
     private var result: ArrayList<Token> = ArrayList()
 
     private fun emptyNumberBufferAsLiteral() {
+
+        if (letterBuffer.isNotEmpty()) {
+            val varName = ArrayList<Char>()
+            varName.addAll(letterBuffer)
+            varName.addAll(numberBuffer)
+            result.add(Token("Variable", varName.joinToString("")))
+
+            numberBuffer = ArrayList()
+            letterBuffer = ArrayList()
+        }
+
         if(numberBuffer.isNotEmpty()) {
             result.add(Token("Literal", numberBuffer.joinToString("")))
             numberBuffer = ArrayList()
@@ -85,38 +96,58 @@ class Tokenizer {
         val reader = inStr.replace(" ", "").asIterable().iterator()
         while (reader.hasNext()){
             val char = reader.next()
-
             if (isDigit(char)) {
+
                 numberBuffer.add(char)
+
             } else if(char == '.') {
+
                 numberBuffer.add(char)
+
             } else if (isLetter(char)) {
+
                 if(numberBuffer.isNotEmpty()) {
+
                     emptyNumberBufferAsLiteral()
                     result.add( Token("Operator", "*"))
+
                 }
+
                 letterBuffer.add(char)
+
             } else if (isOperator(char)) {
+
                 emptyNumberBufferAsLiteral()
                 emptyLetterBufferAsVariables()
                 result.add( Token("Operator", char.toString()))
+
             } else if (isLeftParenthesis(char)) {
+
                 if(letterBuffer.isNotEmpty()) {
+
                     result.add( Token("Function", letterBuffer.joinToString("")))
                     letterBuffer = ArrayList()
+
                 } else if(numberBuffer.isNotEmpty()) {
+
                     emptyNumberBufferAsLiteral()
                     result.add( Token("Operator", "*"))
+
                 }
                 result.add( Token("Left Parenthesis", char.toString()))
+
             } else if (isRightParenthesis(char)) {
+
                 emptyLetterBufferAsVariables()
                 emptyNumberBufferAsLiteral()
                 result.add( Token("Right Parenthesis", char.toString()))
+
             } else if (isComma(char)) {
+
                 emptyNumberBufferAsLiteral()
                 emptyLetterBufferAsVariables()
                 result.add( Token("Function Argument Separator", char.toString()))
+
             }
         }
         if (numberBuffer.isNotEmpty()) {
@@ -146,25 +177,27 @@ class AstNode(val token:Token, val leftChildNode: AstNode? = null, val rightChil
         return this.token.value + "\t=>" + leftChildNode?.toStr(count + 1) + "\n" + "\t".repeat(count + 1) + "=>" + rightChildNode?.toStr(count + 1)
     }
 
-    fun getValue():Double {
+    fun getValue(variables: Map<String, String>):Double {
         return when (token.type) {
+            "Variable" -> variables.getOrDefault(token.value, "0.0").toDouble()
             "Literal" -> token.value.toDouble()
             "Operator" -> {
                 return when (token.value) {
-                    "+" -> leftChildNode!!.getValue() + rightChildNode!!.getValue()
-                    "-" -> leftChildNode!!.getValue() - rightChildNode!!.getValue()
-                    "*" -> leftChildNode!!.getValue() * rightChildNode!!.getValue()
-                    "/" -> leftChildNode!!.getValue() / rightChildNode!!.getValue()
-                    else -> 0.0
+                    "+" -> leftChildNode!!.getValue(variables) + rightChildNode!!.getValue(variables)
+                    "-" -> leftChildNode!!.getValue(variables) - rightChildNode!!.getValue(variables)
+                    "*" -> leftChildNode!!.getValue(variables) * rightChildNode!!.getValue(variables)
+                    "/" -> leftChildNode!!.getValue(variables) / rightChildNode!!.getValue(variables)
+                    else -> Double.NaN
                 }
             }
-            else -> 0.0
+            else -> Double.NaN
         }
 
     }
 }
 
 class AstTree(tokens: ArrayList<Token>) {
+    private val variables = mutableMapOf<String, String>()
     private val opStack = Stack<Token>()
     private val outStack = Stack<AstNode>()
     var root: AstNode = AstNode(Token())
@@ -251,15 +284,18 @@ class AstTree(tokens: ArrayList<Token>) {
     }
 
     fun getValue():Double {
-        return root.getValue()
+        return root.getValue(variables)
     }
 
+    fun setVariable(name:String, value: String) {
+        variables[name] = value
+    }
 
 }
 
 fun main(args: Array<String>) {
     val tokenizer = Tokenizer()
-    val tokens = tokenizer.tokenize("1+3 * 2")
+    val tokens = tokenizer.tokenize("A5 + 5A1")
     tokens.forEach {
         System.out.println(it)
     }
