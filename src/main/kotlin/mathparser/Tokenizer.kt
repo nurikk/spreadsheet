@@ -63,7 +63,6 @@ class Tokenizer (inStr:String) {
         }
 
         if (parenteses!=0) {
-            System.out.printf("parenteses !=0\n")
             tokens = ArrayList()
         }
 

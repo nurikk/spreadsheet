@@ -2,63 +2,72 @@ package spreadsheet
 
 import mathparser.AstTree
 import mathparser.Tokenizer
+import java.util.*
+import kotlin.properties.Delegates
+
 
 class Cell(private var value: String, private var cellName: String) {
-    private var calculatedValue:Double = Double.NaN
+    var ast: AstTree by Delegates.notNull()
+    var tokenizer: Tokenizer by Delegates.notNull()
+
+    init {
+        if (isExpression()) {
+            this.tokenizer = Tokenizer(value.substring(1))
+            this.ast = AstTree(tokenizer.tokens)
+        }
+    }
 
     private fun isExpression():Boolean {
         return value.first() == '='
     }
 
-    init {
-        if (!isExpression()) {
-            calculatedValue = value.toDouble()
+
+    fun getDependecies(): List<String> {
+        if (isExpression()){
+            return tokenizer.getVariableNames()
+        } else {
+            return emptyList()
         }
+
     }
 
     @Throws(Exception::class)
     private fun evalExpression(spreadsheet: Spreadsheet):Double {
-        var exString = toString()
-        var tokenizer = Tokenizer(exString)
-        var deps = tokenizer.getVariableNames()
-        // TODO: add circular detection
-//        //Very dumb curcula dependacy detection
-//        while (deps.isNotEmpty()) {
-//            deps.forEach {
-//                val depCell = spreadsheet.getCell(it)
-//                exString = exString.replace(it, depCell.toString())
-//            }
-//
-//            tokenizer = Tokenizer(exString)
-//            deps = tokenizer.getVariableNames()
-//            if (deps.contains(cellName)){
-//                throw Exception("Circular dependence detected")
-//            }
-//        }
 
-        val ast = AstTree(tokenizer.tokens)
+        val deps = getDependecies().toMutableList()
+        val depsToCheck = Stack<String>()
+        val checkedDeps = mutableListOf<String>()
+
+        depsToCheck.addAll(deps)
+        while (depsToCheck.isNotEmpty()){
+            if (depsToCheck.contains(cellName)) {
+                throw Exception("circular dependency")
+            }
+            val dep = depsToCheck.pop()
+            val subDeps = spreadsheet.getCell(dep).getDependecies().filter { !checkedDeps.contains(it) }
+            depsToCheck.addAll(subDeps)
+            checkedDeps.add(dep)
+
+        }
+
         deps.forEach { miss ->
             ast.setVariable(miss, spreadsheet.getValue(miss).toString())
         }
 
-        calculatedValue = ast.getValue()
-        return calculatedValue
+        return ast.getValue()
 
     }
 
     fun getValue(spreadsheet: Spreadsheet):Double {
-        return if(!calculatedValue.isNaN()) {
-            calculatedValue
+        if (isExpression()){
+            return evalExpression(spreadsheet)
         } else {
-            evalExpression(spreadsheet)
+            return value.toDouble()
         }
 
     }
 
     override fun toString(): String {
-        if (!calculatedValue.isNaN()) {
-            return calculatedValue.toString()
-        }
         return if (isExpression()) value.substring(1) else value
     }
 }
