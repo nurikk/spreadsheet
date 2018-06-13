@@ -1,7 +1,7 @@
 package spreadsheet
 
-import mathparser.AstTree
-import mathparser.Tokenizer
+import org.mariuszgromada.math.mxparser.Expression
+
 
 class Cell(private var value: String, private var cellName: String) {
     private var calculatedValue:Double = Double.NaN
@@ -19,29 +19,28 @@ class Cell(private var value: String, private var cellName: String) {
     @Throws(Exception::class)
     private fun evalExpression(spreadsheet: Spreadsheet):Double {
         var exString = toString()
-        var tokenizer = Tokenizer(exString)
-        var deps = tokenizer.getVariableNames()
 
-        //Very dumb
+        var exp = Expression(exString)
+
+        var deps = exp.missingUserDefinedArguments
+
         while (deps.isNotEmpty()) {
             deps.forEach {
+//                System.out.printf("dep: %s exString:\n", it, exString)
                 val depCell = spreadsheet.getCell(it)
                 exString = exString.replace(it, depCell.toString())
             }
-
-            tokenizer = Tokenizer(exString)
-            deps = tokenizer.getVariableNames()
+            exp = Expression(exString)
+            deps = exp.missingUserDefinedArguments
             if (deps.contains(cellName)){
                 throw Exception("Circular dependence detected")
             }
         }
 
-        val ast = AstTree(tokenizer.tokens)
-        deps.forEach { miss ->
-            ast.setVariable(miss, spreadsheet.getValue(miss).toString())
+        exp.missingUserDefinedArguments.forEach { miss ->
+            exp.defineConstant(miss, spreadsheet.getValue(miss))
         }
-
-        calculatedValue = ast.getValue()
+        calculatedValue = exp.calculate()
         return calculatedValue
 
     }

@@ -86,7 +86,7 @@ class SpreadsheetTest {
     fun errorFormulas() {
         val s1 = Spreadsheet()
         s1.addRow("A", "=A2/0,3,1,1".split(","))
-        assertEquals("[[Infinity, 3.00000, 1.00000, 1.00000]]", s1.getRows().toString())
+        assertEquals("[[NaN, 3.00000, 1.00000, 1.00000]]", s1.getRows().toString())
 
 
         val s2 = Spreadsheet()

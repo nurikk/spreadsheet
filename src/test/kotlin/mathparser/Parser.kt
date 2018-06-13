@@ -1,8 +1,6 @@
 package mathparser
 
 import org.junit.Test
-import java.util.*
-import kotlin.collections.ArrayList
 
 import kotlin.test.*
 
@@ -26,12 +24,6 @@ class ParserTest {
 
         val tokenizer5 = Tokenizer("A3*(A0+1)")
         assertEquals("[Variable (A3), Operator (*), Left Parenthesis ((), Variable (A0), Operator (+), Literal (1), Right Parenthesis ())]", tokenizer5.toString())
-        assertEquals(Arrays.asList("A3", "A0"), tokenizer5.getVariableNames())
-
-
-
-        val tokenizer6 = Tokenizer("3 + 4 (*(((* 2 / ( 1 - 5 ) * 2 / 3")
-        assertEquals("[]", tokenizer6.toString())
     }
 
 
@@ -82,16 +74,6 @@ class ParserTest {
 
         val ast2 = AstTree(tokens2)
         assertEquals(-3.0, ast2.getValue())
-
-
-
-        val tokens3 = ArrayList<Token>()
-        tokens3.add(Token("Literal", "3"))
-        tokens3.add(Token("Operator", "/"))
-        tokens3.add(Token("Literal", "0"))
-        val ast3 = AstTree(tokens3)
-        assertEquals(Double.POSITIVE_INFINITY, ast3.getValue())
-
     }
 
 
@@ -108,7 +90,6 @@ class ParserTest {
 
 
 
-
         val tokens2 = ArrayList<Token>()
         tokens2.add(Token("Variable", "A4"))
         tokens2.add(Token("Operator", "+"))
@@ -119,19 +100,7 @@ class ParserTest {
 
         ast2.setVariable("B1", "2")
         assertEquals(7.0, ast2.getValue())
-
-
-
     }
-
-
-    @Test
-    fun wrongAstExecution(){
-        val tokens3 = ArrayList<Token>()
-        val ast3 = AstTree(tokens3)
-        assertEquals(Double.NaN, ast3.getValue())
-    }
-
 
 
 }

@@ -76,9 +76,9 @@ class AstTree(tokens: ArrayList<Token>) {
             val leftChildNode = outStack.pop()
             outStack.push(AstNode(opStack.pop(), leftChildNode, rightChildNode))
         }
-        if (outStack.isNotEmpty()){
-            root = outStack.pop()
-        }
+
+        root = outStack.pop()
+
     }
 
     override fun toString(): String {
