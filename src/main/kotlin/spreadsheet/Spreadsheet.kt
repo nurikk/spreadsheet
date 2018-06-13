@@ -1,4 +1,4 @@
-package pw.cucumber.dbs
+package spreadsheet
 
 import java.util.*
 
@@ -15,7 +15,7 @@ class Spreadsheet {
         val cellName = cell[0].toString()
         val cellIndex = cell.substring(1).toInt()
         val row = cols.getOrDefault(cellName, ArrayList())
-        return row.getOrElse(cellIndex){Cell("0", "XX")}
+        return row.getOrElse(cellIndex){ Cell("0", "XX") }
     }
     fun getValue(cell:String):Double {
 

@@ -61,22 +61,6 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>HelloKt</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-
-
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.6</version>
                 <executions>
@@ -87,7 +71,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>pw.cucumber.dbs.Application</mainClass>
+                                    <mainClass>spreadsheet.Application</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>

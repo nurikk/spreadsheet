@@ -1,4 +1,4 @@
-package pw.cucumber.dbs
+package tools
 
 import java.io.File
 import java.util.*
@@ -17,7 +17,7 @@ fun generateFormula(rows: List<Char>, cols: Int = 1000):String {
 
     while (cells.size < numCells) {
         val colName = rows.shuffled()[0]
-        val colNum =  + rand(1, cols)
+        val colNum =  +rand(1, cols)
         cells.add("$colName$colNum")
     }
     return "=" + cells.joinToString(oprator)

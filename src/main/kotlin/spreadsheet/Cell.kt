@@ -1,4 +1,4 @@
-package pw.cucumber.dbs
+package spreadsheet
 
 import org.mariuszgromada.math.mxparser.Expression
 
@@ -17,7 +17,7 @@ class Cell(private var value: String, private var cellName: String) {
     }
 
     @Throws(Exception::class)
-    private fun evalExpression(spreadsheet:Spreadsheet):Double {
+    private fun evalExpression(spreadsheet: Spreadsheet):Double {
         var exString = toString()
 
         var exp = Expression(exString)

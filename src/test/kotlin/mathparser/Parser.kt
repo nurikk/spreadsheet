@@ -1,6 +1,7 @@
-package pw.cucumber.dbs
+package mathparser
 
 import org.junit.Test
+
 import kotlin.test.*
 
 
