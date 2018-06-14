@@ -45,13 +45,13 @@ open class Application {
                         }
                     }
                     runBlocking {
-                        val rows = deferred.map({ it.await() }) //
+                        val rows = deferred.map { it.await() } //
                         rows.forEach { out.println(it.joinToString(","))}
                     }
                 }
 
 
-            } catch (e: MissingOptionException) {
+            } catch (e: Throwable) {
                     System.out.println(e.message)
             }
 

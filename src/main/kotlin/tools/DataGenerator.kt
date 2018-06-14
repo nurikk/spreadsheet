@@ -52,11 +52,11 @@ fun generateData(rows: List<Char>, cols: Int = 1000, formulas: Int = 50):ArrayLi
 
 fun main(args: Array<String>) {
 
-//    writeToFile("./mocks/10cols.csv", generateData(('A'..'G').toList(), 10, 10))
-//    writeToFile("./mocks/100cols.csv", generateData(('A'..'Z').toList(), 100, 10))
-//    writeToFile("./mocks/1000cols.csv", generateData(('A'..'Z').toList(), 1000, 10))
-//    writeToFile("./mocks/10000cols.csv", generateData(('A'..'Z').toList(), 10000, 10))
-//    writeToFile("./mocks/100000cols.csv", generateData(('A'..'Z').toList(), 100000, 10))
+    writeToFile("./mocks/10cols.csv", generateData(('A'..'Z').toList(), 10, 10))
+    writeToFile("./mocks/100cols.csv", generateData(('A'..'Z').toList(), 100, 10))
+    writeToFile("./mocks/1000cols.csv", generateData(('A'..'Z').toList(), 1000, 10))
+    writeToFile("./mocks/10000cols.csv", generateData(('A'..'Z').toList(), 10000, 10))
+    writeToFile("./mocks/100000cols.csv", generateData(('A'..'Z').toList(), 100000, 10))
 
 
 }
