@@ -126,7 +126,7 @@ class Tokenizer (inStr:String) {
         if (numberBuffer.isNotEmpty()) {
             emptyNumberBufferAsLiteral()
         }
-        if (letterBuffer.isEmpty()) {
+        if (letterBuffer.isNotEmpty()) {
             emptyLetterBufferAsVariables()
         }
         validateTokens()
